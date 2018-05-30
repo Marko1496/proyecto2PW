@@ -3,6 +3,7 @@ class App extends React.Component {
     super(props);
     this.state = { usuario: [], pagActual: 0}
     this.cambiarPagina = this.cambiarPagina.bind(this);
+    this.setUsuario = this.setUsuario.bind(this);
   }
   componentDidUpdate(){
     (function($) {
@@ -102,10 +103,13 @@ class App extends React.Component {
     this.setState({ pagActual: pagina });
     this.forceUpdate();
   }
+  setUsuario(usuario) {
+    this.setState({ usuario: usuario });
+  }
 
   render(){
     if(this.state.pagActual === 0){
-      return (<Login cambiarPagina={this.cambiarPagina}/>);
+      return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario}/>);
     }
     else{
       return (
@@ -285,7 +289,7 @@ class App extends React.Component {
                 <div className="col-md-12">
                   {(() => {
                           switch (this.state.pagActual) {
-                            case 1: return <p>Pag 1</p>;
+                            case 1: return this.state.usuario.nombre;
                             case 2: return <p>Pag 2</p>;
                             case 3: return <p>Pag 3</p>;
                             case 4: return <p>Pag 4</p>;

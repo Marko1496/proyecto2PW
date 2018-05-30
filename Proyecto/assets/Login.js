@@ -2,9 +2,27 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.ingresar = this.ingresar.bind(this);
+    this.state = { usuario: "", contrasena: ""}
+    this.setCampos = this.setCampos.bind(this);
   }
   ingresar(){
-    this.props.cambiarPagina(1);
+    console.log(this.state.usuario+'*'+this.state.contrasena);
+    fetch('php/datos.php/usuario/'+this.state.usuario+'HXZ'+this.state.contrasena)
+    .then((response) => {
+      console.log(response);
+        return response.json()
+    })
+    .then((data) => {
+      if(data.length > 0){
+        this.props.setUsuario(data[0]);
+        this.props.cambiarPagina(1);
+      }
+    })
+  }
+
+  setCampos(event) {
+    const propiedad = event.currentTarget.getAttribute('name');
+    this.setState({[propiedad]: event.target.value});
   }
   render(){
     return (
@@ -14,12 +32,12 @@ class Login extends React.Component {
         <div className="card-body">
           <form>
             <div className="form-group">
-              <label >Email address</label>
-              <input className="form-control" id="exampleInputEmail1" type="email" aria-describedby="emailHelp" placeholder="Enter email" />
+              <label >Usuario</label>
+              <input onChange={this.setCampos} className="form-control" name="usuario" id="exampleInputEmail1" type="text" aria-describedby="emailHelp" placeholder="Enter email" />
             </div>
             <div className="form-group">
               <label >Password</label>
-              <input className="form-control" id="exampleInputPassword1" type="password" placeholder="Password" />
+              <input onChange={this.setCampos} className="form-control" name="contrasena" id="exampleInputPassword1" type="password" placeholder="Password" />
             </div>
             <div className="form-group">
               <div className="form-check">
