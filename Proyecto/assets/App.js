@@ -1,11 +1,14 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0}
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[]}
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
+    this.setGrupos = this.setGrupos.bind(this);
+    this.setMensajes = this.setMensajes.bind(this);
   }
   componentDidUpdate(){
+    //this.setGrupos();
     (function($) {
       "use strict"; // Start of use strict
       // Configure tooltips for collapsed side navigation
@@ -53,51 +56,32 @@ class App extends React.Component {
     })(jQuery); // End of use strict
   }
   componentDidMount() {
-    (function($) {
-      "use strict"; // Start of use strict
-      // Configure tooltips for collapsed side navigation
-      $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
-        template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
-      })
-      // Toggle the side navigation
-      $("#sidenavToggler").click(function(e) {
-        e.preventDefault();
-        $("body").toggleClass("sidenav-toggled");
-        $(".navbar-sidenav .nav-link-collapse").addClass("collapsed");
-        $(".navbar-sidenav .sidenav-second-level, .navbar-sidenav .sidenav-third-level").removeClass("show");
-      });
-      // Force the toggled class to be removed when a collapsible nav link is clicked
-      $(".navbar-sidenav .nav-link-collapse").click(function(e) {
-        e.preventDefault();
-        $("body").removeClass("sidenav-toggled");
-      });
-      // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
-      $('body.fixed-nav .navbar-sidenav, body.fixed-nav .sidenav-toggler, body.fixed-nav .navbar-collapse').on('mousewheel DOMMouseScroll', function(e) {
-        var e0 = e.originalEvent,
-          delta = e0.wheelDelta || -e0.detail;
-        this.scrollTop += (delta < 0 ? 1 : -1) * 30;
-        e.preventDefault();
-      });
-      // Scroll to top button appear
-      $(document).scroll(function() {
-        var scrollDistance = $(this).scrollTop();
-        if (scrollDistance > 100) {
-          $('.scroll-to-top').fadeIn();
-        } else {
-          $('.scroll-to-top').fadeOut();
-        }
-      });
-      // Configure tooltips globally
-      $('[data-toggle="tooltip"]').tooltip()
-      // Smooth scrolling using jQuery easing
-      $(document).on('click', 'a.scroll-to-top', function(event) {
-        var $anchor = $(this);
-        $('html, body').stop().animate({
-          scrollTop: ($($anchor.attr('href')).offset().top)
-        }, 1000, 'easeInOutExpo');
-        event.preventDefault();
-      });
-    })(jQuery); // End of use strict
+  }
+  setGrupos(usuario_id){
+    fetch('php/datos.php/usuarioxgrupo/'+usuario_id)
+    .then((response) => {
+      console.log(response);
+        return response.json()
+    })
+    .then((data) => {
+      console.log(data);
+      if(data.length > 0){
+        this.setState({ grupos: data });
+      }
+    })
+  }
+  setMensajes(usuario_id){
+    fetch('php/datos.php/mensaje/'+usuario_id)
+    .then((response) => {
+      console.log(response);
+        return response.json()
+    })
+    .then((data) => {
+      console.log(data);
+      if(data.length > 0){
+        this.setState({ mensajes: data });
+      }
+    })
   }
   cambiarPagina(pagina) {
     this.setState({ pagActual: pagina });
@@ -109,13 +93,14 @@ class App extends React.Component {
 
   render(){
     if(this.state.pagActual === 0){
-      return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario}/>);
+      return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario}
+        setGrupos={this.setGrupos} setMensajes={this.setMensajes}/>);
     }
     else{
       return (
         <div>
           <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-            <a className="navbar-brand" href="#">Pizarra Informativa</a>
+            <a className="navbar-brand" href="#" onClick={() => this.cambiarPagina(1)}>Pizarra Informativa</a>
             <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -289,9 +274,9 @@ class App extends React.Component {
                 <div className="col-md-12">
                   {(() => {
                           switch (this.state.pagActual) {
-                            case 1: return this.state.usuario.nombre;
-                            case 2: return <p>Pag 2</p>;
-                            case 3: return <p>Pag 3</p>;
+                            case 1: return <Index grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
+                            case 2: return this.state.grupos.length;
+                            case 3: return this.state.mensajes.length;
                             case 4: return <p>Pag 4</p>;
                             case 5: return <p>Pag 5</p>;
                             default: return <p>Pag 1</p>;

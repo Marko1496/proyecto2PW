@@ -14,6 +14,8 @@ class Login extends React.Component {
     })
     .then((data) => {
       if(data.length > 0){
+        this.props.setMensajes(data[0].id);
+        this.props.setGrupos(data[0].id);
         this.props.setUsuario(data[0]);
         this.props.cambiarPagina(1);
       }
