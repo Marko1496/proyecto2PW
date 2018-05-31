@@ -6,10 +6,8 @@ class Login extends React.Component {
     this.setCampos = this.setCampos.bind(this);
   }
   ingresar(){
-    console.log(this.state.usuario+'*'+this.state.contrasena);
     fetch('php/datos.php/usuario/'+this.state.usuario+'HXZ'+this.state.contrasena)
     .then((response) => {
-      console.log(response);
         return response.json()
     })
     .then((data) => {

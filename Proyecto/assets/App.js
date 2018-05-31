@@ -7,11 +7,53 @@ class App extends React.Component {
     this.setGrupos = this.setGrupos.bind(this);
     this.setMensajes = this.setMensajes.bind(this);
   }
+  componentDidMount(){
+
+    $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
+    template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+  })
+  // Toggle the side navigation
+  $("#sidenavToggler").click(function(e) {
+    e.preventDefault();
+    $("body").toggleClass("sidenav-toggled");
+    $(".navbar-sidenav .nav-link-collapse").addClass("collapsed");
+    $(".navbar-sidenav .sidenav-second-level, .navbar-sidenav .sidenav-third-level").removeClass("show");
+  });
+  // Force the toggled class to be removed when a collapsible nav link is clicked
+  $(".navbar-sidenav .nav-link-collapse").click(function(e) {
+    e.preventDefault();
+    $("body").removeClass("sidenav-toggled");
+  });
+  // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
+  $('body.fixed-nav .navbar-sidenav, body.fixed-nav .sidenav-toggler, body.fixed-nav .navbar-collapse').on('mousewheel DOMMouseScroll', function(e) {
+    var e0 = e.originalEvent,
+      delta = e0.wheelDelta || -e0.detail;
+    this.scrollTop += (delta < 0 ? 1 : -1) * 30;
+    e.preventDefault();
+  });
+  // Scroll to top button appear
+  $(document).scroll(function() {
+    var scrollDistance = $(this).scrollTop();
+    if (scrollDistance > 100) {
+      $('.scroll-to-top').fadeIn();
+    } else {
+      $('.scroll-to-top').fadeOut();
+    }
+  });
+  // Configure tooltips globally
+  $('[data-toggle="tooltip"]').tooltip()
+  // Smooth scrolling using jQuery easing
+  $(document).on('click', 'a.scroll-to-top', function(event) {
+    var $anchor = $(this);
+    $('html, body').stop().animate({
+      scrollTop: ($($anchor.attr('href')).offset().top)
+    }, 1000, 'easeInOutExpo');
+    event.preventDefault();
+  });
+
+  }
   componentDidUpdate(){
-    //this.setGrupos();
-    (function($) {
-      "use strict"; // Start of use strict
-      // Configure tooltips for collapsed side navigation
+
       $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
         template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
       })
@@ -53,34 +95,30 @@ class App extends React.Component {
         }, 1000, 'easeInOutExpo');
         event.preventDefault();
       });
-    })(jQuery); // End of use strict
-  }
-  componentDidMount() {
+
   }
   setGrupos(usuario_id){
-    fetch('php/datos.php/usuarioxgrupo/'+usuario_id)
+    return fetch('php/datos.php/usuarioxgrupo/'+usuario_id)
     .then((response) => {
-      console.log(response);
         return response.json()
     })
     .then((data) => {
-      console.log(data);
       if(data.length > 0){
         this.setState({ grupos: data });
       }
+      return data;
     })
   }
   setMensajes(usuario_id){
-    fetch('php/datos.php/mensaje/'+usuario_id)
+    return fetch('php/datos.php/mensaje/'+usuario_id)
     .then((response) => {
-      console.log(response);
         return response.json()
     })
     .then((data) => {
-      console.log(data);
       if(data.length > 0){
         this.setState({ mensajes: data });
       }
+      return data;
     })
   }
   cambiarPagina(pagina) {
@@ -275,7 +313,7 @@ class App extends React.Component {
                   {(() => {
                           switch (this.state.pagActual) {
                             case 1: return <Index grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
-                            case 2: return this.state.grupos.length;
+                            case 2: return <Grupos grupos={this.state.grupos} usuario={this.state.usuario}/>;
                             case 3: return this.state.mensajes.length;
                             case 4: return <p>Pag 4</p>;
                             case 5: return <p>Pag 5</p>;
