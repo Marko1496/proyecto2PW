@@ -25,7 +25,7 @@ class Index extends React.Component {
           arrayMensajes.unshift(nextProps.mensajes[j]);
         }
       }
-      mensajesxgrupo.unshift(arrayMensajes);
+      mensajesxgrupo.push(arrayMensajes);
     }
     this.setState({ mensajesXgrupo: mensajesxgrupo});
   }

@@ -1,17 +1,17 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[]}
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: []}
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
     this.setGrupos = this.setGrupos.bind(this);
     this.setMensajes = this.setMensajes.bind(this);
+    this.setGruposUsuario = this.setGruposUsuario.bind(this);
   }
   componentDidMount(){
-
     $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
-    template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
-  })
+      template: '<div class="tooltip navbar-sidenav-tooltip" role="tooltip" style="pointer-events: none;"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+    })
   // Toggle the side navigation
   $("#sidenavToggler").click(function(e) {
     e.preventDefault();
@@ -121,9 +121,21 @@ class App extends React.Component {
       return data;
     })
   }
+  setGruposUsuario(){
+    fetch('php/datos.php/grupo/'+this.state.usuario.id)
+    .then((response) => {
+        return response.json()
+    })
+    .then((data) => {
+        this.setState({ gruposUsuario: data });
+        this.forceUpdate();
+    })
+  }
   cambiarPagina(pagina) {
     this.setState({ pagActual: pagina });
-    this.forceUpdate();
+    if(pagina === 1){
+      this.setGruposUsuario();
+    }
   }
   setUsuario(usuario) {
     this.setState({ usuario: usuario });
@@ -313,7 +325,7 @@ class App extends React.Component {
                   {(() => {
                           switch (this.state.pagActual) {
                             case 1: return <Index grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
-                            case 2: return <Grupos grupos={this.state.grupos} usuario={this.state.usuario}/>;
+                            case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario}/>;
                             case 3: return this.state.mensajes.length;
                             case 4: return <p>Pag 4</p>;
                             case 5: return <p>Pag 5</p>;

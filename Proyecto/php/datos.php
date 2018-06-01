@@ -140,18 +140,11 @@ class UsuariosHandler{
       $dbh = $this->init();
       try {
         $_PUT=json_decode(file_get_contents('php://input'), True);
-        $id_fatura = $_PUT['id_fatura'];
-        $fecha = $_PUT['fecha'];
-        $cliente = $_PUT['cliente'];
-        $impuestos = $_PUT['impuestos'];
-        $monto_total = $_PUT['monto_total'];
+        $ID_Usuario = $_PUT['ID_Usuario'];
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $dbh->prepare("INSERT INTO facturas (fecha,cliente,impuestos,monto_total)
-        VALUES (:fecha,:cliente,:impuestos,:monto_total)");
-        $stmt->bindParam(':fecha', $fecha);
-        $stmt->bindParam(':cliente', $cliente);
-        $stmt->bindParam(':impuestos', $impuestos);
-        $stmt->bindParam(':monto_total', $monto_total);
+        $stmt = $dbh->prepare("INSERT INTO Usuario_Por_Grupo (ID_Usuario, ID_Grupo)
+                            VALUES (:ID_Usuario,(SELECT MAX(ID_Grupo) FROM Grupos))");
+        $stmt->bindParam(':ID_Usuario', $ID_Usuario);
         $dbh->beginTransaction();
         $stmt->execute();
         $dbh->commit();
@@ -311,11 +304,135 @@ class UsuariosHandler{
           }
         }
       }
+      class GruposHandler{
+        function init() {
+          try {
+            $dbh = new PDO('sqlite:Proyecto.db');
+            return $dbh;
+          } catch (Exception $e) {
+            die("Unable to connect: " . $e->getMessage());
+          }
+        }
+        function get($id=null) {
+          $dbh = $this->init();
+          try {
+            if ($id!=null) {
+              //$stmt = $dbh->prepare("SELECT * FROM productos WHERE id_factura = :id");
+
+              $stmt = $dbh->prepare("SELECT * FROM Grupos WHERE administrador =:id");
+              $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+            } else {
+              $stmt = $dbh->prepare("SELECT * FROM Grupos");
+            }
+            $stmt->execute();
+            $data = Array();
+            while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $data[] = $result;
+            }
+            echo json_encode($data);
+          } catch (Exception $e) {
+            echo "Failed: " . $e->getMessage();
+          }
+        }
+        function put($id=null) {
+          $dbh = $this->init();
+          try {
+            $_PUT=json_decode(file_get_contents('php://input'), True);
+
+            $tema = $_PUT['tema'];
+            $descripcion = $_PUT['descripcion'];
+            $categoria = $_PUT['categoria'];
+            $region = $_PUT['region'];
+            $pais = $_PUT['pais'];
+            $ciudad = $_PUT['ciudad'];
+            $idioma = $_PUT['idioma'];
+            $actividad = $_PUT['actividad'];
+            $administrador = $_PUT['administrador'];
+            $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $dbh->prepare("INSERT INTO Grupos (tema,descripcion,categorias,region,pais,ciudad,idioma,cant_miembros,actividad,administrador)
+            VALUES (:tema,:descripcion,:categorias,:region,:pais,:ciudad,:idioma,1,:actividad,:administrador)");
+            $stmt->bindParam(':tema', $tema);
+            $stmt->bindParam(':descripcion', $descripcion);
+            $stmt->bindParam(':categorias', $categoria);
+            $stmt->bindParam(':region', $region);
+            $stmt->bindParam(':pais', $pais);
+            $stmt->bindParam(':ciudad', $ciudad);
+            $stmt->bindParam(':idioma', $idioma);
+            $stmt->bindParam(':actividad', $actividad);
+            $stmt->bindParam(':administrador', $administrador);
+            $dbh->beginTransaction();
+            $stmt->execute();
+            $dbh->commit();
+            echo $stmt->insert_id;
+          } catch (Exception $e) {
+            $dbh->rollBack();
+            echo "Failed: " . $e->getMessage();
+          }
+        }
+        function delete($id=null) {
+          $dbh = $this->init();
+          try {
+            $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $dbh->prepare("DELETE FROM Grupos WHERE ID_Grupo = :id_grupo");
+            $stmt->bindParam(':id_grupo', $id);
+            $dbh->beginTransaction();
+            $stmt->execute();
+            $dbh->commit();
+            echo 'Successfull';
+          } catch (Exception $e) {
+            $dbh->rollBack();
+            echo "Failed: " . $e->getMessage();
+          }
+        }
+        function post($id=null) {
+          $dbh = $this->init();
+          try {
+            $_POST=json_decode(file_get_contents('php://input'), True);
+            if ($_POST['method']=='put')
+              return $this->put($id);
+            else if ($_POST['method']=='delete')
+              return $this->delete($id);
+            $id_grupo = $_POST['id_grupo'];
+            $tema = $_POST['tema'];
+            $descripcion = $_POST['descripcion'];
+            $categoria = $_POST['categoria'];
+            $region = $_POST['region'];
+            $pais = $_POST['pais'];
+            $ciudad = $_POST['ciudad'];
+            $idioma = $_POST['idioma'];
+            $actividad = $_POST['actividad'];
+            $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $dbh->prepare("UPDATE Grupos SET tema=:tema,
+              descripcion=:descripcion, categorias=:categorias,
+              region=:region, pais=:pais,
+              ciudad=:ciudad, idioma=:idioma,
+              actividad=:actividad WHERE ID_Grupo = :ID_Grupo");
+            $stmt->bindParam(':tema', $tema);
+            $stmt->bindParam(':descripcion', $descripcion);
+            $stmt->bindParam(':categorias', $categoria);
+            $stmt->bindParam(':region', $region);
+            $stmt->bindParam(':pais', $pais);
+            $stmt->bindParam(':ciudad', $ciudad);
+            $stmt->bindParam(':idioma', $idioma);
+            $stmt->bindParam(':actividad', $actividad);
+            $stmt->bindParam(':ID_Grupo', $id_grupo);
+            $dbh->beginTransaction();
+            $stmt->execute();
+            $dbh->commit();
+            echo 'Successfull';
+            } catch (Exception $e) {
+              $dbh->rollBack();
+              echo "Failed: " . $e->getMessage();
+            }
+          }
+        }
   Toro::serve(array(
     "/usuario" => "UsuariosHandler",
     "/usuario/:alpha" => "UsuariosHandler",
     "/usuarioxgrupo" => "UsuariosXGrupoHandler",
     "/usuarioxgrupo/:alpha" => "UsuariosXGrupoHandler",
+    "/grupo" => "GruposHandler",
+    "/grupo/:alpha" => "GruposHandler",
     "/mensaje" => "MensajesHandler",
     "/mensaje/:alpha" => "MensajesHandler"
   ));
