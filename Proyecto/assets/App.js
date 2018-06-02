@@ -1,12 +1,13 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: []}
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: []}
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
     this.setGrupos = this.setGrupos.bind(this);
     this.setMensajes = this.setMensajes.bind(this);
     this.setGruposUsuario = this.setGruposUsuario.bind(this);
+    this.setUsuarios = this.setUsuarios.bind(this);
   }
   componentDidMount(){
     $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
@@ -131,10 +132,23 @@ class App extends React.Component {
         this.forceUpdate();
     })
   }
+
+  setUsuarios(){
+    fetch('php/datos.php/usuarios/')
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      this.setState({usuarios: data});
+    })
+  }
   cambiarPagina(pagina) {
     this.setState({ pagActual: pagina });
     if(pagina === 1){
       this.setGruposUsuario();
+    }
+    else if (pagina === 4) {
+      this.setUsuarios();
     }
   }
   setUsuario(usuario) {
@@ -144,7 +158,7 @@ class App extends React.Component {
   render(){
     if(this.state.pagActual === 0){
       return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario}
-        setGrupos={this.setGrupos} setMensajes={this.setMensajes}/>);
+        setGrupos={this.setGrupos} setMensajes={this.setMensajes} setUsuarios={this.setUsuarios}/>);
     }
     else{
       return (
@@ -236,7 +250,7 @@ class App extends React.Component {
                     <a className="dropdown-item" href="#">
                       <strong>David Miller</strong>
                       <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">Hey there! This new version of SB Admin is pretty awesome! These messages clip off when they reach the end of the box so they don't overflow over to the sides!</div>
+                      <div className="dropdown-message small">Hey there! This new version of SB Admin is pretty awesome! These messages clip off when they reach the end of the box so they do not overflow over to the sides!</div>
                     </a>
                     <div className="dropdown-divider"></div>
                     <a className="dropdown-item" href="#">
@@ -327,7 +341,7 @@ class App extends React.Component {
                             case 1: return <Index grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
                             case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario}/>;
                             case 3: return this.state.mensajes.length;
-                            case 4: return <p>Pag 4</p>;
+                            case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
                             case 5: return <p>Pag 5</p>;
                             default: return <p>Pag 1</p>;
                           }
