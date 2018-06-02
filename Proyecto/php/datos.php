@@ -493,8 +493,8 @@ class UsuariosHandler{
             $dbh = $this->init();
             try{
               $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-              $stmt = $dbh->prepare("DELETE FROM Usuarios WHERE id = :id");
-              $stmt->bindParam(':id', $id);
+              $stmt = $dbh->prepare("DELETE FROM Usuarios WHERE id = :Id_usuario");
+              $stmt->bindParam(':Id_usuario', $id);
               $dbh->beginTransaction();
               $stmt->execute();
               $dbh->commit();
@@ -513,18 +513,16 @@ class UsuariosHandler{
                 return $this->put($id);
               else if ($_POST['method']=='delete')
                 return $this->delete($id);
-                $id_usuario = $_PUT['id_usuario'];
-                $nombre = $_PUT['nombre'];
-                $correo = $_PUT['correo'];
-                $edad = $_PUT['edad'];
-                $pais = $_PUT['pais'];
-                $genero = $_PUT['genero'];
-                $contrasena = $_PUT['contrasena'];
+                $id_usuario = $_POST['id_usuario'];
+                $nombre = $_POST['nombre'];
+                $correo = $_POST['correo'];
+                $edad = $_POST['edad'];
+                $pais = $_POST['pais'];
+                $genero = $_POST['genero'];
+                $contrasena = $_POST['contrasena'];
                 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $stmt = $dbh->prepare("UPDATE Usuarios SET nombre=:nombre,
-                  correo=:correo, edad=:edad,pais=:pais, genero=:genero,contrasena=:contrasena, idioma=:idioma
+                $stmt = $dbh->prepare("UPDATE Usuarios SET nombre=:nombre,correo=:correo, edad=:edad,pais=:pais, genero=:genero,contrasena=:contrasena
                   WHERE id = :Id_usuario");
-
                 $stmt->bindParam(':nombre', $nombre);
                 $stmt->bindParam(':correo', $correo);
                 $stmt->bindParam(':edad', $edad);
