@@ -167,11 +167,11 @@ Eliminar(e){
                   <div className="form-group">
                     <div className="form-row">
                       <div className="col-md-6">
-                        <label>Tema</label>
+                        <label>Nombre</label>
                         <input className="form-control" name="nombre" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.nombre} />
                       </div>
                       <div className="col-md-6">
-                        <label>Descripción</label>
+                        <label>Correo</label>
                         <input className="form-control" name="correo" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.correo}  />
                       </div>
                     </div>
@@ -179,11 +179,11 @@ Eliminar(e){
                   <div className="form-group">
                     <div className="form-row">
                       <div className="col-md-6">
-                        <label>Categoría</label>
+                        <label>Edad</label>
                         <input className="form-control" name="edad" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.edad} />
                       </div>
                       <div className="col-md-6">
-                        <label>Región</label>
+                        <label>Pais</label>
                         <input className="form-control" name="pais" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.pais} />
                       </div>
                     </div>
@@ -191,11 +191,11 @@ Eliminar(e){
                   <div className="form-group">
                     <div className="form-row">
                       <div className="col-md-6">
-                        <label>País</label>
+                        <label>Genero</label>
                         <input className="form-control" name="genero" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.genero} />
                       </div>
                       <div className="col-md-6">
-                        <label>Ciudad</label>
+                        <label>Contraseña</label>
                         <input className="form-control" name="contrasena" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.contrasena} />
                       </div>
                     </div>
