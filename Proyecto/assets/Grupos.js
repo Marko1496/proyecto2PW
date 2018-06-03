@@ -1,7 +1,7 @@
 class Grupos extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tema: "" , descripcion: "", categoria: 0, region: "", pais: "", ciudad: "", id_grupo: 0,
+    this.state = { tema: "" , descripcion: "", categoria: "", region: "", pais: "", ciudad: "", id_grupo: 0,
                     idioma: "", actividad: "", accion: "Guardar" };
     this.prepararEditar = this.prepararEditar.bind(this);
     this.prepararInsertar = this.prepararInsertar.bind(this);
@@ -12,6 +12,7 @@ class Grupos extends React.Component {
     this.Actualizar = this.Actualizar.bind(this);
     this.Eliminar = this.Eliminar.bind(this);
   }
+
   guardarDatos(){
     if(this.state.accion === "Guardar"){
       this.Insertar();
@@ -21,7 +22,6 @@ class Grupos extends React.Component {
     }
   }
   Insertar(){
-    console.log("entro");
     fetch("php/datos.php/grupo/",{
       method: "post",
       headers: {'Content-Type': 'application/json'},
@@ -55,7 +55,6 @@ class Grupos extends React.Component {
     });
   }
   Actualizar(){
-    console.log("B2");
     fetch("php/datos.php/grupo/",{
       method: "post",
       headers: {'Content-Type': 'application/json'},
@@ -71,8 +70,6 @@ class Grupos extends React.Component {
         actividad: this.state.actividad
       })
     }).then((response) => {
-      console.log("B3");
-      console.log(response);
       this.props.setGrupos(this.props.usuario.id);
       this.props.setGruposUsuario();
     });
@@ -92,6 +89,7 @@ class Grupos extends React.Component {
 
   }
   componentDidMount(){
+    this.setState({categoria: this.props.categorias[0].nombre});
     $('#dataTable').DataTable();
   }
   componentDidUpdate(){
@@ -108,7 +106,7 @@ class Grupos extends React.Component {
                     accion: "Editar" });
   }
   prepararInsertar(e){
-    this.setState({ tema: "" , descripcion: "", categoria: 0, region: "", pais: "", ciudad: "",
+    this.setState({ tema: "" , descripcion: "", categoria: this.props.categorias[0].nombre, region: "", pais: "", ciudad: "",
                     idioma: "", actividad: "", accion: "Guardar" });
   }
   handleFields(event) {
@@ -116,6 +114,9 @@ class Grupos extends React.Component {
     this.setState({[propiedad]: event.target.value});
   }
   render(){
+    const listaCategorias = this.props.categorias.map((categoria,index) =>
+        <option value={categoria.nombre} key={index}>{categoria.nombre}</option>
+    );
     var id_usuario = this.props.usuario.id;
     const listaGrupos = this.props.gruposUsuario.map((grupo,index) =>
         <tr key={index}>
@@ -126,13 +127,11 @@ class Grupos extends React.Component {
           <td>{grupo.pais}</td>
           <td>{grupo.ciudad}</td>
           <td>{grupo.idioma}</td>
-          <td>{grupo.administrador}</td>
           <td>
             <div className="row">
               <div className="col-md-12">
                 <i className="fa fa-fw fa-pencil" index={index} onClick={this.prepararEditar} data-toggle="modal" data-target="#modalGrupos"></i>|
-                <i className="fa fa-fw fa-trash" index={index} onClick={this.Eliminar}></i>|
-                <i className="fa fa-fw fa-eye"></i>
+                <i className="fa fa-fw fa-trash" index={index} onClick={this.Eliminar}></i>
               </div>
             </div>
           </td>
@@ -153,7 +152,6 @@ class Grupos extends React.Component {
                 <th>Pais</th>
                 <th>Ciudad</th>
                 <th>Idioma</th>
-                <th>Administrador</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -166,7 +164,6 @@ class Grupos extends React.Component {
                 <th>Pais</th>
                 <th>Ciudad</th>
                 <th>Idioma</th>
-                <th>Administrador</th>
                 <th>Acciones</th>
               </tr>
             </tfoot>
@@ -203,7 +200,9 @@ class Grupos extends React.Component {
                     <div className="form-row">
                       <div className="col-md-6">
                         <label>Categoría</label>
-                        <input className="form-control" name="categoria" onChange={this.handleFields} type="text" aria-describedby="" placeholder="" value={this.state.categoria} />
+                        <select className="form-control" name="categoria" onChange={this.handleFields} value={this.state.categoria}>
+                          {listaCategorias}
+                        </select>
                       </div>
                       <div className="col-md-6">
                         <label>Región</label>

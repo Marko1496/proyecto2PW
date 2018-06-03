@@ -1,7 +1,7 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: []}
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: []};
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
     this.setGrupos = this.setGrupos.bind(this);
@@ -10,6 +10,7 @@ class App extends React.Component {
     this.setUsuarios = this.setUsuarios.bind(this);
     this.refrescar = this.refrescar.bind(this);
     this.setCategorias = this.setCategorias.bind(this);
+    this.cerrarSesion = this.cerrarSesion.bind(this);
   }
   componentDidMount(){
     $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
@@ -172,6 +173,11 @@ class App extends React.Component {
   refrescar(){
     this.forceUpdate();
   }
+  cerrarSesion(e){
+    e.preventDefault();
+    this.setState({ usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: []});
+    this.forceUpdate();
+  }
 
   render(){
     if(this.state.pagActual === 0){
@@ -206,141 +212,8 @@ class App extends React.Component {
                     <span className="nav-link-text">Usuarios</span>
                   </a>
                 </li>
-                <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-                  <a className="nav-link" onClick={() => this.cambiarPagina(5)}>
-                    <i className="fa fa-fw fa-comments"></i>
-                    <span className="nav-link-text">Mensajes</span>
-                  </a>
-                </li>
-                <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
-                  <a className="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti" data-parent="#exampleAccordion">
-                    <i className="fa fa-fw fa-sitemap"></i>
-                    <span className="nav-link-text">Menu Levels</span>
-                  </a>
-                  <ul className="sidenav-second-level collapse" id="collapseMulti">
-                    <li>
-                      <a href="#">Second Level Item</a>
-                    </li>
-                    <li>
-                      <a href="#">Second Level Item</a>
-                    </li>
-                    <li>
-                      <a href="#">Second Level Item</a>
-                    </li>
-                    <li>
-                      <a className="nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti2">Third Level</a>
-                      <ul className="sidenav-third-level collapse" id="collapseMulti2">
-                        <li>
-                          <a href="#">Third Level Item</a>
-                        </li>
-                        <li>
-                          <a href="#">Third Level Item</a>
-                        </li>
-                        <li>
-                          <a href="#">Third Level Item</a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-              <ul className="navbar-nav sidenav-toggler">
-                <li className="nav-item">
-                  <a className="nav-link text-center" id="sidenavToggler">
-                    <i className="fa fa-fw fa-angle-left"></i>
-                  </a>
-                </li>
               </ul>
               <ul className="navbar-nav ml-auto">
-                <li className="nav-item dropdown">
-                  <a className="nav-link dropdown-toggle mr-lg-2" id="messagesDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i className="fa fa-fw fa-envelope"></i>
-                    <span className="d-lg-none">Messages
-                      <span className="badge badge-pill badge-primary">12 New</span>
-                    </span>
-                    <span className="indicator text-primary d-none d-lg-block">
-                      <i className="fa fa-fw fa-circle"></i>
-                    </span>
-                  </a>
-                  <div className="dropdown-menu" aria-labelledby="messagesDropdown">
-                    <h6 className="dropdown-header">New Messages:</h6>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
-                      <strong>David Miller</strong>
-                      <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">Hey there! This new version of SB Admin is pretty awesome! These messages clip off when they reach the end of the box so they do not overflow over to the sides!</div>
-                    </a>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
-                      <strong>Jane Smith</strong>
-                      <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">I was wondering if you could meet for an appointment at 3:00 instead of 4:00. Thanks!</div>
-                    </a>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
-                      <strong>John Doe</strong>
-                      <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">I've sent the final files over to you for review. When you're able to sign off of them let me know and we can discuss distribution.</div>
-                    </a>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item small" href="#">View all messages</a>
-                  </div>
-                </li>
-                <li className="nav-item dropdown">
-                  <a className="nav-link dropdown-toggle mr-lg-2" id="alertsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i className="fa fa-fw fa-bell"></i>
-                    <span className="d-lg-none">Alerts
-                      <span className="badge badge-pill badge-warning">6 New</span>
-                    </span>
-                    <span className="indicator text-warning d-none d-lg-block">
-                      <i className="fa fa-fw fa-circle"></i>
-                    </span>
-                  </a>
-                  <div className="dropdown-menu" aria-labelledby="alertsDropdown">
-                    <h6 className="dropdown-header">New Alerts:</h6>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
-                      <span className="text-success">
-                        <strong>
-                          <i className="fa fa-long-arrow-up fa-fw"></i>Status Update</strong>
-                      </span>
-                      <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">This is an automated server response message. All systems are online.</div>
-                    </a>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
-                      <span className="text-danger">
-                        <strong>
-                          <i className="fa fa-long-arrow-down fa-fw"></i>Status Update</strong>
-                      </span>
-                      <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">This is an automated server response message. All systems are online.</div>
-                    </a>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#">
-                      <span className="text-success">
-                        <strong>
-                          <i className="fa fa-long-arrow-up fa-fw"></i>Status Update</strong>
-                      </span>
-                      <span className="small float-right text-muted">11:21 AM</span>
-                      <div className="dropdown-message small">This is an automated server response message. All systems are online.</div>
-                    </a>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item small" href="#">View all alerts</a>
-                  </div>
-                </li>
-                <li className="nav-item">
-                  <form className="form-inline my-2 my-lg-0 mr-lg-2">
-                    <div className="input-group">
-                      <input className="form-control" type="text" placeholder="Search for..." />
-                      <span className="input-group-append">
-                        <button className="btn btn-primary" type="button">
-                          <i className="fa fa-search"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </form>
-                </li>
                 <li className="nav-item">
                   <a className="nav-link" data-toggle="modal" data-target="#exampleModal">
                     <i className="fa fa-fw fa-sign-out"></i>Logout</a>
@@ -348,26 +221,30 @@ class App extends React.Component {
               </ul>
             </div>
           </nav>
-
-
           <div className="content-wrapper">
             <div className="container-fluid">
               <div className="row">
                 <div className="col-md-12">
                   {(() => {
                           switch (this.state.pagActual) {
-                            case 1: return <Index refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
-                            case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario}/>;
-                            case 3: return <Categorias setCategorias={this.setCategorias} categorias={this.state.categorias}/>
+                            case 1: return <Index setMensajes={this.setMensajes} refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
+                            case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario} categorias={this.state.categorias}/>;
+                            case 3: return <Categorias refrescar={this.refrescar} setCategorias={this.setCategorias} categorias={this.state.categorias}/>
                             case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
-                            case 5: return <p>Pag 5</p>;
-                            default: return <p>Pag 1</p>;
+                            default: return <Index refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
                           }
                         })()}
                 </div>
               </div>
             </div>
           </div>
+          <footer className="sticky-footer">
+            <div className="container">
+              <div className="text-center">
+                <small>Univesidad Nacional - 2018</small>
+              </div>
+            </div>
+          </footer>
 
           <a className="scroll-to-top rounded" href="#page-top">
             <i className="fa fa-angle-up"></i>
@@ -377,15 +254,15 @@ class App extends React.Component {
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                  <h5 className="modal-title" id="exampleModalLabel">Cerrar Sesion</h5>
                   <button className="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                   </button>
                 </div>
-                <div className="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div className="modal-body">Seleccione "Salir" para cerrar la sesion actual.</div>
                 <div className="modal-footer">
-                  <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                  <a className="btn btn-primary" href="login.html">Logout</a>
+                  <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                  <a className="btn btn-primary" onClick={this.cerrarSesion} data-dismiss="modal" href="#">Salir</a>
                 </div>
               </div>
             </div>

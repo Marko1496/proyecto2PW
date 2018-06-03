@@ -4,6 +4,7 @@ class Index extends React.Component {
     this.state = { mensajesXgrupo: []};
     this.enviarMensaje = this.enviarMensaje.bind(this);
     this.insertarMensaje = this.insertarMensaje.bind(this);
+    this.eliminarMensaje = this.eliminarMensaje.bind(this);
   }
   componentWillMount(){
     var mensajesxgrupo = [];
@@ -49,6 +50,19 @@ class Index extends React.Component {
       }
     }
   }
+
+  eliminarMensaje(e){
+    e.preventDefault();
+    const index = e.currentTarget.getAttribute('index');
+    fetch("php/datos.php/mensaje/"+index,{
+        method: "post",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ method: 'delete'})
+    }).then((response) => {
+      this.props.setMensajes(this.props.usuario.id);
+      this.props.refrescar();
+    });
+  }
   insertarMensaje(tema, usuario, fecha, tamano, contenido, id_grupo, nombre_usuario){
     fetch("php/datos.php/mensaje/",{
       method: "post",
@@ -71,23 +85,23 @@ class Index extends React.Component {
   render(){
     const listaMensajes = this.state.mensajesXgrupo.map((mensajes,index) =>
       mensajes.map((mensajes2,index2) =>
-      <a className="list-group-item list-group-item-action" href="#" key={index2}>
+      <div className="list-group-item list-group-item-action" key={index2}>
         <div className="media">
           <img className="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="" />
           <div className="media-body">
             <strong>{mensajes2.nombre_usuario}</strong>
             <p>{mensajes2.contenido}</p>
-            <p className="text-muted smaller">{mensajes2.fecha}</p>
+            <p className="text-muted smaller">{mensajes2.fecha} {mensajes2.usuario === this.props.usuario.id && <a className="text-muted smaller" index={mensajes2.ID_Mensaje} onClick={this.eliminarMensaje} href="#">Eliminar</a>}</p>
           </div>
         </div>
-      </a>
+      </div>
       )
     );
     const listaGrupos = this.props.grupos.map((grupo,index) =>
     <div className="col-md-4" key={index}>
       <div className="card mb-3">
         <div className="card-header">
-          <i className="fa fa-bell-o"></i> {grupo.tema}</div>
+          {grupo.categorias} <i className="fa fa-fw fa-angle-right"></i> {grupo.tema}</div>
         <div className="lista-mensajes list-group list-group-flush small">
           {listaMensajes[index]}
         </div>
@@ -106,7 +120,7 @@ class Index extends React.Component {
           </div>
         </div>
         <div className="card-footer small text-muted">
-          Administrador:
+          Idioma: {grupo.idioma}
         </div>
       </div>
     </div>

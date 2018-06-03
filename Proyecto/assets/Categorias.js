@@ -41,6 +41,7 @@ Insertar(){
     })
   }).then((response) => {
     this.props.setCategorias();
+    this.props.refrescar();
   });
 }
 
@@ -55,8 +56,8 @@ Actualizar(){
       categoria_padre: this.state.categoria_padre
     })
   }).then((response) => {
-    console.log(response);
     this.props.setCategorias();
+    this.props.refrescar();
   });
 }
 
@@ -88,7 +89,6 @@ handleFields(event) {
 
 
 render(){
-  console.log(this.props.categorias);
   const listaCategorias = this.props.categorias.map((categorias,index) =>
       <tr key={index}>
         <td>{categorias.nombre}</td>
@@ -97,8 +97,7 @@ render(){
           <div className="row">
             <div className="col-md-12">
               <i className="fa fa-fw fa-pencil" index={index} onClick={this.prepararEditar}  data-toggle="modal" data-target="#modalCategorias"></i>|
-              <i className="fa fa-fw fa-trash" index={index} onClick={this.Eliminar} ></i>|
-              <i className="fa fa-fw fa-eye"></i>
+              <i className="fa fa-fw fa-trash" index={index} onClick={this.Eliminar} ></i>
             </div>
           </div>
         </td>

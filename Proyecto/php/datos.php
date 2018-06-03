@@ -266,8 +266,8 @@ class UsuariosHandler{
         $dbh = $this->init();
         try {
           $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-          $stmt = $dbh->prepare("DELETE FROM facturas WHERE id_factura = :id_factura");
-          $stmt->bindParam(':id_factura', $id);
+          $stmt = $dbh->prepare("DELETE FROM Mensajes WHERE ID_Mensaje = :id_mensaje");
+          $stmt->bindParam(':id_mensaje', $id);
           $dbh->beginTransaction();
           $stmt->execute();
           $dbh->commit();

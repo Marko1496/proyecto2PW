@@ -48,8 +48,6 @@ Insertar(){
 }
 
 Actualizar(){
-  console.log(this.state);
-  console.log("B2");
   fetch("php/datos.php/usuarios/",{
     method: "post",
     headers: {'Content-Type': 'application/json'},
@@ -65,8 +63,6 @@ Actualizar(){
 
     })
   }).then((response) => {
-    console.log(this.state.id_usuario);
-    console.log(response);
     this.props.setUsuarios();
   });
 }
@@ -98,7 +94,6 @@ Eliminar(e){
   }
 
   render(){
-    console.log(this.props.usuarios);
     const listaUsuarios = this.props.usuarios.map((usuarios,index) =>
         <tr key={index}>
           <td>{usuarios.nombre}</td>
@@ -111,8 +106,7 @@ Eliminar(e){
             <div className="row">
               <div className="col-md-12">
                 <i className="fa fa-fw fa-pencil" index={index}  onClick={this.prepararEditar} data-toggle="modal" data-target="#modalUsuarios"></i>|
-                <i className="fa fa-fw fa-trash" index={index} onClick={this.Eliminar}></i>|
-                <i className="fa fa-fw fa-eye"></i>
+                <i className="fa fa-fw fa-trash" index={index} onClick={this.Eliminar}></i>
               </div>
             </div>
           </td>

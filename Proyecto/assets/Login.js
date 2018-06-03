@@ -5,7 +5,8 @@ class Login extends React.Component {
     this.state = { usuario: "", contrasena: ""}
     this.setCampos = this.setCampos.bind(this);
   }
-  ingresar(){
+  ingresar(e){
+    e.preventDefault();
     fetch('php/datos.php/usuario/'+this.state.usuario+'HXZ'+this.state.contrasena)
     .then((response) => {
         return response.json()
@@ -35,24 +36,14 @@ class Login extends React.Component {
           <form>
             <div className="form-group">
               <label >Usuario</label>
-              <input onChange={this.setCampos} className="form-control" name="usuario" id="exampleInputEmail1" type="text" aria-describedby="emailHelp" placeholder="Enter email" />
+              <input onChange={this.setCampos} className="form-control" name="usuario" id="exampleInputEmail1" type="text" aria-describedby="emailHelp" placeholder="Usuario..." />
             </div>
             <div className="form-group">
-              <label >Password</label>
-              <input onChange={this.setCampos} className="form-control" name="contrasena" id="exampleInputPassword1" type="password" placeholder="Password" />
+              <label >Contraseña</label>
+              <input onChange={this.setCampos} className="form-control" name="contrasena" id="exampleInputPassword1" type="password" placeholder="Contraseña..." />
             </div>
-            <div className="form-group">
-              <div className="form-check">
-                <label className="form-check-label">
-                  <input className="form-check-input" type="checkbox" /> Remember Password</label>
-              </div>
-            </div>
-            <a className="btn btn-primary btn-block" onClick={this.ingresar}>Login</a>
+            <a className="btn btn-primary btn-block" onClick={this.ingresar} href="#">Login</a>
           </form>
-          <div className="text-center">
-            <a className="d-block small mt-3" href="#">Register an Account</a>
-            <a className="d-block small" href="#">Forgot Password?</a>
-          </div>
         </div>
       </div>
     );
