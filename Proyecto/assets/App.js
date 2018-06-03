@@ -1,7 +1,7 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: []}
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: []}
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
     this.setGrupos = this.setGrupos.bind(this);
@@ -9,6 +9,7 @@ class App extends React.Component {
     this.setGruposUsuario = this.setGruposUsuario.bind(this);
     this.setUsuarios = this.setUsuarios.bind(this);
     this.refrescar = this.refrescar.bind(this);
+    this.setCategorias = this.setCategorias.bind(this);
   }
   componentDidMount(){
     $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
@@ -134,6 +135,16 @@ class App extends React.Component {
     })
   }
 
+  setCategorias(){
+    fetch('php/datos.php/categorias/')
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      this.setState({categorias: data});
+    })
+  }
+
   setUsuarios(){
     fetch('php/datos.php/usuarios/')
     .then((response) => {
@@ -147,6 +158,9 @@ class App extends React.Component {
     this.setState({ pagActual: pagina });
     if(pagina === 1){
       this.setGruposUsuario();
+    }
+    else if (pagina === 3) {
+      this.setCategorias();
     }
     else if (pagina === 4) {
       this.setUsuarios();
@@ -162,7 +176,7 @@ class App extends React.Component {
   render(){
     if(this.state.pagActual === 0){
       return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario}
-        setGrupos={this.setGrupos} setMensajes={this.setMensajes} setUsuarios={this.setUsuarios}/>);
+        setGrupos={this.setGrupos} setMensajes={this.setMensajes} setUsuarios={this.setUsuarios} setCategorias={this.setCategorias}/>);
     }
     else{
       return (
@@ -344,7 +358,7 @@ class App extends React.Component {
                           switch (this.state.pagActual) {
                             case 1: return <Index refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
                             case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario}/>;
-                            case 3: return this.state.mensajes.length;
+                            case 3: return <Categorias setCategorias={this.setCategorias} categorias={this.state.categorias}/>
                             case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
                             case 5: return <p>Pag 5</p>;
                             default: return <p>Pag 1</p>;

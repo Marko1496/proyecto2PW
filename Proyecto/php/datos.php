@@ -547,6 +547,109 @@ class UsuariosHandler{
           }
 
         }
+
+        class CategoriasHandler{
+  function init() {
+    try {
+      $dbh = new PDO('sqlite:Proyecto.db');
+      return $dbh;
+    } catch (Exception $e) {
+      die("Unable to connect: " . $e->getMessage());
+    }
+  }
+
+  function get() {
+    $dbh = $this->init();
+    try{
+        //$stmt = $dbh->prepare("SELECT * FROM productos WHERE id_factura = :id");
+        $stmt = $dbh->prepare("SELECT * FROM Categorias");
+
+      $stmt->execute();
+      $data = Array();
+      while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $data[] = $result;
+      }
+      echo json_encode($data);
+    }
+    catch(Exception $e) {
+      $dbh->rollBack();
+      echo "Failed: " . $e->getMessage();
+    }
+  }
+
+  function put($id=null) {
+    $dbh = $this->init();
+    try{
+      $_PUT=json_decode(file_get_contents('php://input'), True);
+
+      $nombre = $_PUT['nombre'];
+      $categoria_padre = $_PUT['categoria_padre'];
+
+      $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $stmt = $dbh->prepare("INSERT INTO Categorias (nombre,categoria_padre)
+      VALUES (:nombre,:categoria_padre)");
+
+      $stmt->bindParam(':nombre', $nombre);
+      $stmt->bindParam(':categoria_padre', $categoria_padre);
+      $dbh->beginTransaction();
+      $stmt->execute();
+      $dbh->commit();
+      echo "Successfull";
+    }
+    catch(Exception $e) {
+      $dbh->rollBack();
+      echo "Failed: " . $e->getMessage();
+    }
+  }
+
+  function delete($id=null) {
+    $dbh = $this->init();
+    try{
+      $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $stmt = $dbh->prepare("DELETE FROM Categorias WHERE ID_Categoria = :ID_categoria");
+      $stmt->bindParam(':ID_categoria', $id);
+      $dbh->beginTransaction();
+      $stmt->execute();
+      $dbh->commit();
+      echo "Successfull";
+    }
+    catch(Exception $e) {
+      $dbh->rollBack();
+      echo "Failed: " . $e->getMessage();
+    }
+  }
+
+
+  function post($id=null) {
+    $dbh = $this->init();
+    try{
+      $_POST=json_decode(file_get_contents('php://input'), True);
+      if ($_POST['method']=='put')
+        return $this->put($id);
+      else if ($_POST['method']=='delete')
+        return $this->delete($id);
+        $id_categoria = $_POST['id_categoria'];
+        $nombre = $_POST['nombre'];
+        $categoria_padre = $_POST['categoria_padre'];
+
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $dbh->prepare("UPDATE Categorias SET nombre=:nombre, categoria_padre=:categoria_padre WHERE ID_Categoria = :Id_categoria");
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':categoria_padre', $categoria_padre);
+        $stmt->bindParam(':Id_categoria', $id_categoria);
+        $dbh->beginTransaction();
+        $stmt->execute();
+        $dbh->commit();
+        echo "Successfull";
+    }
+    catch(Exception $e) {
+      $dbh->rollBack();
+      echo "Failed: " . $e->getMessage();
+    }
+  }
+}
+
+
   Toro::serve(array(
     "/usuario" => "UsuariosHandler",
     "/usuario/:alpha" => "UsuariosHandler",
@@ -557,6 +660,8 @@ class UsuariosHandler{
     "/mensaje" => "MensajesHandler",
     "/mensaje/:alpha" => "MensajesHandler",
     "/usuarios" => "UsersHandler",
-    "/usuarios/:alpha" => "UsersHandler"
+    "/usuarios/:alpha" => "UsersHandler",
+    "/categorias" => "CategoriasHandler",
+    "/categorias/:alpha" => "CategoriasHandler"
   ));
 ?>
