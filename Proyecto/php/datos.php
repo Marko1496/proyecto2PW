@@ -236,18 +236,23 @@ class UsuariosHandler{
         $dbh = $this->init();
         try {
           $_PUT=json_decode(file_get_contents('php://input'), True);
-          $id_fatura = $_PUT['id_fatura'];
+          $tema = $_PUT['tema'];
+          $usuario = $_PUT['usuario'];
           $fecha = $_PUT['fecha'];
-          $cliente = $_PUT['cliente'];
-          $impuestos = $_PUT['impuestos'];
-          $monto_total = $_PUT['monto_total'];
+          $tamano = $_PUT['tamano'];
+          $contenido = $_PUT['contenido'];
+          $ID_Grupo = $_PUT['ID_Grupo'];
+          $nombre_usuario = $_PUT['nombre_usuario'];
           $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-          $stmt = $dbh->prepare("INSERT INTO facturas (fecha,cliente,impuestos,monto_total)
-          VALUES (:fecha,:cliente,:impuestos,:monto_total)");
+          $stmt = $dbh->prepare("INSERT INTO Mensajes (tema,usuario,fecha,tamano,contenido,ID_Grupo,nombre_usuario)
+          VALUES (:tema,:usuario,:fecha,:tamano,:contenido,:ID_Grupo,:nombre_usuario)");
+          $stmt->bindParam(':tema', $tema);
+          $stmt->bindParam(':usuario', $usuario);
           $stmt->bindParam(':fecha', $fecha);
-          $stmt->bindParam(':cliente', $cliente);
-          $stmt->bindParam(':impuestos', $impuestos);
-          $stmt->bindParam(':monto_total', $monto_total);
+          $stmt->bindParam(':tamano', $tamano);
+          $stmt->bindParam(':contenido', $contenido);
+          $stmt->bindParam(':ID_Grupo', $ID_Grupo);
+          $stmt->bindParam(':nombre_usuario', $nombre_usuario);
           $dbh->beginTransaction();
           $stmt->execute();
           $dbh->commit();

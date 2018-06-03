@@ -2,6 +2,8 @@ class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = { mensajesXgrupo: []};
+    this.enviarMensaje = this.enviarMensaje.bind(this);
+    this.insertarMensaje = this.insertarMensaje.bind(this);
   }
   componentWillMount(){
     var mensajesxgrupo = [];
@@ -9,10 +11,10 @@ class Index extends React.Component {
       var arrayMensajes = [];
       for (var j = 0; j < this.props.mensajes.length; j++) {
         if(this.props.grupos[i].ID_Grupo === this.props.mensajes[j].ID_Grupo){
-          arrayMensajes.unshift(this.props.mensajes[j]);
+          arrayMensajes.push(this.props.mensajes[j]);
         }
       }
-      mensajesxgrupo.unshift(arrayMensajes);
+      mensajesxgrupo.push(arrayMensajes);
     }
     this.setState({ mensajesXgrupo: mensajesxgrupo});
   }
@@ -22,12 +24,49 @@ class Index extends React.Component {
       var arrayMensajes = [];
       for (var j = 0; j < nextProps.mensajes.length; j++) {
         if(nextProps.grupos[i].ID_Grupo === nextProps.mensajes[j].ID_Grupo){
-          arrayMensajes.unshift(nextProps.mensajes[j]);
+          arrayMensajes.push(nextProps.mensajes[j]);
         }
       }
       mensajesxgrupo.push(arrayMensajes);
     }
     this.setState({ mensajesXgrupo: mensajesxgrupo});
+  }
+  enviarMensaje(e){
+    if(e.key === 'Enter'){
+      var mensaje = e.target.value.trim();
+      if(mensaje.length > 0){
+        const grupo = e.currentTarget.getAttribute('grupo');
+        const usuario = e.currentTarget.getAttribute('usuario');
+        const nombreUsuario = e.currentTarget.getAttribute('nombre');
+        const categoria = e.currentTarget.getAttribute('categoria');
+        const tamano = mensaje.length;
+        var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+        var f=new Date();
+        const fecha = f.getDate() + " de " + meses[f.getMonth()] + " de " + f.getFullYear() + " - " +
+                      f.getHours() + ":" + f.getMinutes();
+        this.insertarMensaje(categoria, usuario, fecha, tamano, mensaje, grupo, nombreUsuario);
+        e.target.value = null;
+      }
+    }
+  }
+  insertarMensaje(tema, usuario, fecha, tamano, contenido, id_grupo, nombre_usuario){
+    fetch("php/datos.php/mensaje/",{
+      method: "post",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        method: 'put',
+        tema: tema,
+        usuario: usuario,
+        fecha: fecha,
+        tamano: tamano,
+        contenido: contenido,
+        ID_Grupo: id_grupo,
+        nombre_usuario: nombre_usuario
+      })
+    }).then((response) => {
+      this.props.setMensajes(this.props.usuario.id);
+      this.props.refrescar();
+    });
   }
   render(){
     const listaMensajes = this.state.mensajesXgrupo.map((mensajes,index) =>
@@ -38,7 +77,7 @@ class Index extends React.Component {
           <div className="media-body">
             <strong>{mensajes2.nombre_usuario}</strong>
             <p>{mensajes2.contenido}</p>
-            <p className="text-muted smaller">Today at 4:37 PM - 1hr ago</p>
+            <p className="text-muted smaller">{mensajes2.fecha}</p>
           </div>
         </div>
       </a>
@@ -51,9 +90,22 @@ class Index extends React.Component {
           <i className="fa fa-bell-o"></i> {grupo.tema}</div>
         <div className="list-group list-group-flush small">
           {listaMensajes[index]}
-          <a className="list-group-item list-group-item-action" href="#">View all activity...</a>
+          <div className="list-group-item list-group-item-action" href="#">
+            <input className="form-control"
+              name="mensaje"
+              onKeyUp={this.enviarMensaje}
+              type="text"
+              placeholder="Escriba su mensaje..."
+              grupo={grupo.ID_Grupo}
+              usuario={this.props.usuario.id}
+              nombre={this.props.usuario.nombre}
+              categoria={grupo.categorias}
+            />
+          </div>
         </div>
-        <div className="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        <div className="card-footer small text-muted">
+          Administrador:
+        </div>
       </div>
     </div>
   );

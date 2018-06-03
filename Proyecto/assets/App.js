@@ -8,6 +8,7 @@ class App extends React.Component {
     this.setMensajes = this.setMensajes.bind(this);
     this.setGruposUsuario = this.setGruposUsuario.bind(this);
     this.setUsuarios = this.setUsuarios.bind(this);
+    this.refrescar = this.refrescar.bind(this);
   }
   componentDidMount(){
     $('.navbar-sidenav [data-toggle="tooltip"]').tooltip({
@@ -153,6 +154,9 @@ class App extends React.Component {
   }
   setUsuario(usuario) {
     this.setState({ usuario: usuario });
+  }
+  refrescar(){
+    this.forceUpdate();
   }
 
   render(){
@@ -338,7 +342,7 @@ class App extends React.Component {
                 <div className="col-md-12">
                   {(() => {
                           switch (this.state.pagActual) {
-                            case 1: return <Index grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
+                            case 1: return <Index refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
                             case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario}/>;
                             case 3: return this.state.mensajes.length;
                             case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
