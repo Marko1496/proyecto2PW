@@ -11,6 +11,7 @@ class Grupos extends React.Component {
     this.InsertarUsuarioXGrupo = this.InsertarUsuarioXGrupo.bind(this);
     this.Actualizar = this.Actualizar.bind(this);
     this.Eliminar = this.Eliminar.bind(this);
+    this.eliminarUsuariosXGrupo = this.eliminarUsuariosXGrupo.bind(this);
   }
 
   guardarDatos(){
@@ -81,12 +82,18 @@ class Grupos extends React.Component {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ method: 'delete'})
     }).then((response) => {
+      this.eliminarUsuariosXGrupo(this.props.gruposUsuario[index].ID_Grupo);
+    });
+  }
+  eliminarUsuariosXGrupo(ID_Grupo){
+    fetch("php/datos.php/usuarioxgrupo/"+ID_Grupo,{
+        method: "post",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ method: 'delete'})
+    }).then((response) => {
       this.props.setGrupos(this.props.usuario.id);
       this.props.setGruposUsuario();
     });
-  }
-  prepararEliminar(){
-
   }
   componentDidMount(){
     this.setState({categoria: this.props.categorias[0].nombre});

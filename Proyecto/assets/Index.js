@@ -5,6 +5,7 @@ class Index extends React.Component {
     this.enviarMensaje = this.enviarMensaje.bind(this);
     this.insertarMensaje = this.insertarMensaje.bind(this);
     this.eliminarMensaje = this.eliminarMensaje.bind(this);
+    this.insertarUsuarioXGrupo = this.insertarUsuarioXGrupo.bind(this);
   }
   componentWillMount(){
     var mensajesxgrupo = [];
@@ -44,7 +45,7 @@ class Index extends React.Component {
         var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
         var f=new Date();
         const fecha = f.getDate() + " de " + meses[f.getMonth()] + " de " + f.getFullYear() + " - " +
-                      f.getHours() + ":" + f.getMinutes();
+                      f.getHours() + ":" + (f.getMinutes()<10?'0':'') + f.getMinutes();
         this.insertarMensaje(categoria, usuario, fecha, tamano, mensaje, grupo, nombreUsuario);
         e.target.value = null;
       }
@@ -82,7 +83,43 @@ class Index extends React.Component {
       this.props.refrescar();
     });
   }
+  insertarUsuarioXGrupo(e){
+    console.log("Entro");
+    const ID_Grupo = e.currentTarget.getAttribute('grupo');
+    console.log(ID_Grupo);
+    fetch("php/datos.php/usuarioxgrupo2/",{
+      method: "post",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        method: 'put',
+        ID_Usuario: this.props.usuario.id,
+        ID_Grupo: ID_Grupo
+      })
+    }).then((response) => {
+      this.props.setGrupos(this.props.usuario.id);
+      this.props.setGruposRestantes(this.props.usuario.id);
+      this.props.setMensajes(this.props.usuario.id);
+      this.props.refrescar();
+    });
+  }
   render(){
+
+    const listaGruposRestantes = this.props.gruposRestantes.map((grupo,index) =>
+    <div className="list-group-item list-group-item-action" key={index}>
+      <div className="media row">
+        <img className="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="" />
+        <div className="media-body col-sm-6">
+          <strong>{grupo.categorias}<i className="fa fa-fw fa-angle-right"></i>{grupo.tema}</strong>
+          <p>{grupo.descripcion}</p>
+          <p className="text-muted smaller">{grupo.pais} - {grupo.idioma}</p>
+        </div>
+        <div className="media-body col-sm-6">
+          <button className="btn btn-primary" grupo={grupo.ID_Grupo} onClick={this.insertarUsuarioXGrupo} type="button">Unirse</button>
+        </div>
+      </div>
+    </div>
+    );
+
     const listaMensajes = this.state.mensajesXgrupo.map((mensajes,index) =>
       mensajes.map((mensajes2,index2) =>
       <div className="list-group-item list-group-item-action" key={index2}>
@@ -131,6 +168,23 @@ class Index extends React.Component {
         <hr />
         <div className="row">
           {listaGrupos}
+        </div>
+        <hr />
+        <div className="row">
+          <div className="col-md-6">
+            <div className="card mb-3">
+              <div className="card-header">
+                Grupos que te podrían interesar
+              </div>
+              <div className="lista-mensajes list-group list-group-flush small">
+                {listaGruposRestantes}
+              </div>
+              <div className="list-group list-group-flush small">
+              </div>
+              <div className="card-footer small text-muted">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

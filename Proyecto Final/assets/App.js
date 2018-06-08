@@ -212,6 +212,12 @@ class App extends React.Component {
                     <span className="nav-link-text">Usuarios</span>
                   </a>
                 </li>
+                <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                  <a className="nav-link" onClick={() => this.cambiarPagina(5)}>
+                    <i className="fa fa-fw fa-user"></i>
+                    <span className="nav-link-text">Graficos</span>
+                  </a>
+                </li>
               </ul>
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
@@ -231,6 +237,7 @@ class App extends React.Component {
                             case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario} categorias={this.state.categorias}/>;
                             case 3: return <Categorias refrescar={this.refrescar} setCategorias={this.setCategorias} categorias={this.state.categorias}/>
                             case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
+                            case 5: return <Graficos />;
                             default: return <Index refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
                           }
                         })()}

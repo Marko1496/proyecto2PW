@@ -15,6 +15,7 @@ class Login extends React.Component {
       if(data.length > 0){
         this.props.setMensajes(data[0].id);
         this.props.setGrupos(data[0].id);
+        this.props.setGruposRestantes(data[0].id);
         this.props.setUsuario(data[0]);
         this.props.setUsuarios();
         this.props.setCategorias();

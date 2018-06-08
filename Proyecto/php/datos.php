@@ -158,8 +158,8 @@ class UsuariosHandler{
       $dbh = $this->init();
       try {
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $dbh->prepare("DELETE FROM facturas WHERE id_factura = :id_factura");
-        $stmt->bindParam(':id_factura', $id);
+        $stmt = $dbh->prepare("DELETE FROM Usuario_Por_Grupo WHERE ID_Grupo = :ID_Grupo");
+        $stmt->bindParam(':ID_Grupo', $id);
         $dbh->beginTransaction();
         $stmt->execute();
         $dbh->commit();
@@ -175,32 +175,79 @@ class UsuariosHandler{
         $_POST=json_decode(file_get_contents('php://input'), True);
         if ($_POST['method']=='put')
           return $this->put($id);
-        else if ($_POST['method']=='delete')
+        if ($_POST['method']=='delete')
           return $this->delete($id);
-        $id_factura = $_POST['id_factura'];
-        $fecha = $_POST['fecha'];
-        $cliente = $_POST['cliente'];
-        $impuestos = $_POST['impuestos'];
-        $monto_total = $_POST['monto_total'];
-        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $dbh->prepare("UPDATE facturas SET fecha=:fecha,
-          cliente=:cliente, impuestos=:impuestos,
-          monto_total=:monto_total WHERE id_factura = :id_factura");
-          $stmt->bindParam(':id_factura', $id_factura);
-          $stmt->bindParam(':fecha', $fecha);
-          $stmt->bindParam(':cliente', $cliente);
-          $stmt->bindParam(':impuestos', $impuestos);
-          $stmt->bindParam(':monto_total', $monto_total);
-          $dbh->beginTransaction();
-          $stmt->execute();
-          $dbh->commit();
-          echo 'Successfull';
         } catch (Exception $e) {
           $dbh->rollBack();
           echo "Failed: " . $e->getMessage();
         }
       }
     }
+
+    class UsuariosXGrupoHandler2{
+      function init() {
+        try {
+          $dbh = new PDO('sqlite:Proyecto.db');
+          return $dbh;
+        } catch (Exception $e) {
+          die("Unable to connect: " . $e->getMessage());
+        }
+      }
+      function get($id=null,$pass=null) {
+        $dbh = $this->init();
+        try {
+          if ($id!=null) {
+            //$stmt = $dbh->prepare("SELECT * FROM productos WHERE id_factura = :id");
+
+            $stmt = $dbh->prepare("SELECT * FROM Grupos WHERE ID_Grupo IN
+              (SELECT ID_Grupo FROM Usuario_Por_Grupo WHERE ID_Usuario != :id and ID_Grupo NOT IN
+                (SELECT ID_Grupo FROM Usuario_Por_Grupo WHERE ID_Usuario = :id))");
+            $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+          } else {
+            $stmt = $dbh->prepare("SELECT * FROM Usuarios");
+          }
+          $stmt->execute();
+          $data = Array();
+          while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = $result;
+          }
+          echo json_encode($data);
+        } catch (Exception $e) {
+          echo "Failed: " . $e->getMessage();
+        }
+      }
+      function put($id=null) {
+        $dbh = $this->init();
+        try {
+          $_PUT=json_decode(file_get_contents('php://input'), True);
+          $ID_Usuario = $_PUT['ID_Usuario'];
+          $ID_Grupo = $_PUT['ID_Grupo'];
+          $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $stmt = $dbh->prepare("INSERT INTO Usuario_Por_Grupo (ID_Usuario, ID_Grupo)
+                              VALUES (:ID_Usuario, :ID_Grupo)");
+          $stmt->bindParam(':ID_Usuario', $ID_Usuario);
+          $stmt->bindParam(':ID_Grupo', $ID_Grupo);
+          $dbh->beginTransaction();
+          $stmt->execute();
+          $dbh->commit();
+          echo $stmt->insert_id;
+        } catch (Exception $e) {
+          $dbh->rollBack();
+          echo "Failed: " . $e->getMessage();
+        }
+      }
+      function post($id=null) {
+        $dbh = $this->init();
+        try {
+          $_POST=json_decode(file_get_contents('php://input'), True);
+          if ($_POST['method']=='put')
+            return $this->put($id);
+          } catch (Exception $e) {
+            $dbh->rollBack();
+            echo "Failed: " . $e->getMessage();
+          }
+        }
+      }
     class MensajesHandler{
       function init() {
         try {
@@ -655,6 +702,8 @@ class UsuariosHandler{
     "/usuario/:alpha" => "UsuariosHandler",
     "/usuarioxgrupo" => "UsuariosXGrupoHandler",
     "/usuarioxgrupo/:alpha" => "UsuariosXGrupoHandler",
+    "/usuarioxgrupo2" => "UsuariosXGrupoHandler2",
+    "/usuarioxgrupo2/:alpha" => "UsuariosXGrupoHandler2",
     "/grupo" => "GruposHandler",
     "/grupo/:alpha" => "GruposHandler",
     "/mensaje" => "MensajesHandler",
