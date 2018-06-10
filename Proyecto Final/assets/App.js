@@ -1,10 +1,11 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: []};
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: [], gruposRestantes: []};
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
     this.setGrupos = this.setGrupos.bind(this);
+    this.setGruposRestantes = this.setGruposRestantes.bind(this);
     this.setMensajes = this.setMensajes.bind(this);
     this.setGruposUsuario = this.setGruposUsuario.bind(this);
     this.setUsuarios = this.setUsuarios.bind(this);
@@ -113,6 +114,19 @@ class App extends React.Component {
       return data;
     })
   }
+  setGruposRestantes(usuario_id){
+    return fetch('php/datos.php/usuarioxgrupo2/'+usuario_id)
+    .then((response) => {
+        return response.json()
+    })
+    .then((data) => {
+      if(data.length > 0){
+        console.log(data);
+        this.setState({ gruposRestantes: data });
+      }
+      return data;
+    })
+  }
   setMensajes(usuario_id){
     return fetch('php/datos.php/mensaje/'+usuario_id)
     .then((response) => {
@@ -175,13 +189,13 @@ class App extends React.Component {
   }
   cerrarSesion(e){
     e.preventDefault();
-    this.setState({ usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: []});
+    this.setState({ usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: [], gruposRestantes: []});
     this.forceUpdate();
   }
 
   render(){
     if(this.state.pagActual === 0){
-      return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario}
+      return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario} setGruposRestantes={this.setGruposRestantes}
         setGrupos={this.setGrupos} setMensajes={this.setMensajes} setUsuarios={this.setUsuarios} setCategorias={this.setCategorias}/>);
     }
     else{
@@ -221,6 +235,9 @@ class App extends React.Component {
               </ul>
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
+                  <a className="nav-link">Usuario: {this.state.usuario.nombre}</a>
+                </li>
+                <li className="nav-item">
                   <a className="nav-link" data-toggle="modal" data-target="#exampleModal">
                     <i className="fa fa-fw fa-sign-out"></i>Logout</a>
                 </li>
@@ -233,12 +250,12 @@ class App extends React.Component {
                 <div className="col-md-12">
                   {(() => {
                           switch (this.state.pagActual) {
-                            case 1: return <Index setMensajes={this.setMensajes} refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
+                            case 1: return <Index setGruposRestantes={this.setGruposRestantes} setGrupos={this.setGrupos} setMensajes={this.setMensajes} refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes} gruposRestantes={this.state.gruposRestantes}/>;
                             case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario} categorias={this.state.categorias}/>;
                             case 3: return <Categorias refrescar={this.refrescar} setCategorias={this.setCategorias} categorias={this.state.categorias}/>
                             case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
                             case 5: return <Graficos />;
-                            default: return <Index refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes}/>;
+                            default: return <Index setGrupos={this.setGrupos} setMensajes={this.setMensajes} refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes} gruposRestantes={this.state.gruposRestantes}/>;
                           }
                         })()}
                 </div>
