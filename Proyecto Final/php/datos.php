@@ -697,6 +697,41 @@ class UsuariosHandler{
 }
 
 
+class GraficosHandler{
+
+  function init() {
+    try {
+      $dbh = new PDO('sqlite:Proyecto.db');
+      return $dbh;
+    } catch (Exception $e) {
+      die("Unable to connect: " . $e->getMessage());
+    }
+  }
+
+  function get($id=null) {
+    $dbh = $this->init();
+    try {
+      if ($id!=null) {
+        //$stmt = $dbh->prepare("SELECT * FROM productos WHERE id_factura = :id");
+
+        $stmt = $dbh->prepare("SELECT ID_Grupo, usuario,nombre_usuario, count(ID_Mensaje) AS Cantidad FROM Mensajes WHERE ID_Grupo = 2 and usuario = 2 ORDER BY Cantidad");
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+      } else {
+        $stmt = $dbh->prepare("SELECT * FROM Mensajes");
+      }
+      $stmt->execute();
+      $data = Array();
+      while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $data[] = $result;
+      }
+      echo json_encode($data);
+    } catch (Exception $e) {
+      echo "Failed: " . $e->getMessage();
+    }
+  }
+}
+
+
   Toro::serve(array(
     "/usuario" => "UsuariosHandler",
     "/usuario/:alpha" => "UsuariosHandler",
