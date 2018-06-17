@@ -216,7 +216,7 @@ class App extends React.Component {
                 </li>
                 <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
                   <a className="nav-link" onClick={() => this.cambiarPagina(3)}>
-                    <i className="fa fa-fw fa-area-chart"></i>
+                    <i className="fa fa-fw fa-list-alt"></i>
                     <span className="nav-link-text">Categorias</span>
                   </a>
                 </li>
@@ -228,7 +228,7 @@ class App extends React.Component {
                 </li>
                 <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
                   <a className="nav-link" onClick={() => this.cambiarPagina(5)}>
-                    <i className="fa fa-fw fa-user"></i>
+                    <i className="fa fa-fw fa-area-chart"></i>
                     <span className="nav-link-text">Graficos</span>
                   </a>
                 </li>

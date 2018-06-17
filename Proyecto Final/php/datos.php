@@ -708,14 +708,17 @@ class GraficosHandler{
     }
   }
 
-  function get($id=null) {
+  function get() {
     $dbh = $this->init();
     try {
       if ($id!=null) {
-        //$stmt = $dbh->prepare("SELECT * FROM productos WHERE id_factura = :id");
 
-        $stmt = $dbh->prepare("SELECT ID_Grupo, usuario,nombre_usuario, count(ID_Mensaje) AS Cantidad FROM Mensajes WHERE ID_Grupo = 2 and usuario = 2 ORDER BY Cantidad");
-        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+        $id_grupo = $_POST['id_grupo'];
+        $id_usuario = $_POST['id_usuario'];
+
+        $stmt = $dbh->prepare("SELECT ID_Grupo, usuario,nombre_usuario, count(ID_Mensaje) AS Cantidad FROM Mensajes WHERE ID_Grupo = :id_grupo and usuario = :usuario ORDER BY Cantidad");
+        $stmt->bindParam(':id_grupo', $id_grupo);
+        $stmt->bindParam(':usuario', $id_usuario);
       } else {
         $stmt = $dbh->prepare("SELECT * FROM Mensajes");
       }
@@ -746,6 +749,8 @@ class GraficosHandler{
     "/usuarios" => "UsersHandler",
     "/usuarios/:alpha" => "UsersHandler",
     "/categorias" => "CategoriasHandler",
-    "/categorias/:alpha" => "CategoriasHandler"
+    "/categorias/:alpha" => "CategoriasHandler",
+    "/graficos" => "GraficosHandler",
+    "/graficos/:alpha/:/alpha" => "GraficosHandler"
   ));
 ?>
