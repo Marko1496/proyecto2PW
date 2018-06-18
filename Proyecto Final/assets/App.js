@@ -1,10 +1,11 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: [], gruposRestantes: []};
+    this.state = { usuario: [], pagActual: 0, grupos:[], mensajes:[], gruposUsuario: [], usuarios: [], categorias: [], gruposRestantes: [], gruposTodos: []};
     this.cambiarPagina = this.cambiarPagina.bind(this);
     this.setUsuario = this.setUsuario.bind(this);
     this.setGrupos = this.setGrupos.bind(this);
+    this.setGruposTodos = this.setGruposTodos.bind(this);
     this.setGruposRestantes = this.setGruposRestantes.bind(this);
     this.setMensajes = this.setMensajes.bind(this);
     this.setGruposUsuario = this.setGruposUsuario.bind(this);
@@ -150,6 +151,17 @@ class App extends React.Component {
     })
   }
 
+  setGruposTodos(){
+    fetch('php/datos.php/grupo')
+    .then((response) => {
+        return response.json()
+    })
+    .then((data) => {
+        this.setState({ gruposTodos: data });
+        this.forceUpdate();
+    })
+  }
+
   setCategorias(){
     fetch('php/datos.php/categorias/')
     .then((response) => {
@@ -195,7 +207,7 @@ class App extends React.Component {
 
   render(){
     if(this.state.pagActual === 0){
-      return (<Login cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario} setGruposRestantes={this.setGruposRestantes}
+      return (<Login setGruposTodos={this.setGruposTodos} cambiarPagina={this.cambiarPagina} setUsuario={this.setUsuario} setGruposRestantes={this.setGruposRestantes}
         setGrupos={this.setGrupos} setMensajes={this.setMensajes} setUsuarios={this.setUsuarios} setCategorias={this.setCategorias}/>);
     }
     else{
@@ -254,7 +266,7 @@ class App extends React.Component {
                             case 2: return <Grupos setGrupos={this.setGrupos} setGruposUsuario={this.setGruposUsuario} usuario={this.state.usuario} gruposUsuario={this.state.gruposUsuario} categorias={this.state.categorias}/>;
                             case 3: return <Categorias refrescar={this.refrescar} setCategorias={this.setCategorias} categorias={this.state.categorias}/>
                             case 4: return <Usuarios setUsuarios={this.setUsuarios} usuarios={this.state.usuarios}/>;
-                            case 5: return <Graficos />;
+                            case 5: return <Graficos gruposTodos={this.state.gruposTodos}/>;
                             default: return <Index setGrupos={this.setGrupos} setMensajes={this.setMensajes} refrescar={this.refrescar} setMensajes={this.setMensajes} usuario={this.state.usuario} grupos={this.state.grupos} mensajes={this.state.mensajes} gruposRestantes={this.state.gruposRestantes}/>;
                           }
                         })()}

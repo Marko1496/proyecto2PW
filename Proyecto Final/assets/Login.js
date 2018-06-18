@@ -20,6 +20,7 @@ class Login extends React.Component {
         this.props.setUsuarios();
         this.props.setCategorias();
         this.props.cambiarPagina(1);
+        this.props.setGruposTodos();
       }
     })
   }

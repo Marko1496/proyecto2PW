@@ -708,17 +708,13 @@ class GraficosHandler{
     }
   }
 
-  function get() {
+  function get($id=null) {
     $dbh = $this->init();
     try {
       if ($id!=null) {
 
-        $id_grupo = $_POST['id_grupo'];
-        $id_usuario = $_POST['id_usuario'];
-
-        $stmt = $dbh->prepare("SELECT ID_Grupo, usuario,nombre_usuario, count(ID_Mensaje) AS Cantidad FROM Mensajes WHERE ID_Grupo = :id_grupo and usuario = :usuario ORDER BY Cantidad");
-        $stmt->bindParam(':id_grupo', $id_grupo);
-        $stmt->bindParam(':usuario', $id_usuario);
+        $stmt = $dbh->prepare("SELECT ID_Grupo, usuario,nombre_usuario, count(ID_Mensaje) AS Cantidad FROM Mensajes WHERE ID_Grupo = :id_grupo GROUP BY usuario");
+        $stmt->bindParam(':id_grupo', $id);
       } else {
         $stmt = $dbh->prepare("SELECT * FROM Mensajes");
       }
@@ -751,6 +747,6 @@ class GraficosHandler{
     "/categorias" => "CategoriasHandler",
     "/categorias/:alpha" => "CategoriasHandler",
     "/graficos" => "GraficosHandler",
-    "/graficos/:alpha/:/alpha" => "GraficosHandler"
+    "/graficos/:alpha" => "GraficosHandler"
   ));
 ?>
